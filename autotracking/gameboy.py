@@ -1,7 +1,7 @@
 import sys
 import consts
-from EvilGameboy import EvilGameboy
-from RetroGameboy import RetroGameboy
+from webgameboy import WebGameboy
+
 
 class Gameboy:
     def __init__(self):
@@ -33,25 +33,9 @@ class Gameboy:
             self.gfxSnapshot = self.emulator.readRom(consts.gfxStart, consts.gfxHashSize)
     
     def findEmulator(self):
-        if sys.platform == "win32":
-            client = EvilGameboy()
-            if client.findEmulator():
-                self.emulator = client
-                return True
-            else:
-                self.emulator = None
-
-        if self.emulator != None and self.emulator.isConnected():
-            return True
-
-        client = RetroGameboy()
-        if client.findEmulator():
-            self.emulator = client
-            return True
-        else:
-            self.emulator = None
-
-        return False
+        if self.emulator is None:
+            self.emulator = WebGameboy(12345)
+        return True
 
     def readRamByte(self, address):
         return self.ramSnapshot[address - consts.wram]
