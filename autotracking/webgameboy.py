@@ -4,9 +4,12 @@ import http.server
 import threading
 
 
+default_port = 8010
+
+
 class HttpRequestHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
-        content_length = int(self.headers['Content-Length'])
+        content_length = int(self.headers.get('Content-Length', 0))
         post_data = self.rfile.read(content_length)
 
         self.send_response(200)
@@ -28,7 +31,7 @@ class WebGameboy:
         self.canReadRom = False
         WebGameboy.instance = self
 
-        self.server = http.server.HTTPServer(('127.0.0.1', 8010), HttpRequestHandler)
+        self.server = http.server.HTTPServer(('127.0.0.1', default_port), HttpRequestHandler)
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
         self.thread.start()
 

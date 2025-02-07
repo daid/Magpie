@@ -3,7 +3,9 @@ import asyncio
 import requests
 import traceback
 import websockets
+import argparse
 from gameboy import Gameboy
+import webgameboy
 from items import *
 from checks import *
 from entrances import *
@@ -101,6 +103,12 @@ def getVersion():
         return 'unknown'
 
 async def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--port', type=int, default=17026)
+    parser.add_argument('--http', type=int, default=8010)
+    args = parser.parse_args()
+    webgameboy.default_port = args.http
+
     version = getVersion()
     print(f'Autotracker version {version}, protocol {protocolVersion}')
 
@@ -114,7 +122,7 @@ async def main():
         print("Unable to check for updates")
 
     print('\nListening for tracker')
-    async with websockets.serve(socketLoop, host=None, port=17026, max_size=1024*1024*10):
+    async with websockets.serve(socketLoop, host=None, port=args.port, max_size=1024*1024*10):
         await asyncio.Future()
 
 asyncio.run(main())
